@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final double height;
   final double circularRadius;
   const CustomButton(
       {Key? key,
       required this.text,
-      required this.onPressed,
+      this.onPressed,
       this.height = 55,
       this.circularRadius = 30})
       : super(key: key);

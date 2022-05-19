@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:spy_chat/services/auth_service.dart';
 
 import '../models/user.dart';
 
@@ -38,15 +40,21 @@ class _UsersPageState extends State<UsersPage> {
   ];
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    final user = authService.user;
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
-        title: Text('Mi nombre', style: TextStyle(color: Colors.black87)),
+        title: Text(user!.name.toString(), style: TextStyle(color: Colors.black87)),
         centerTitle: true,
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.logout_outlined, color: Colors.black87),
-          onPressed: () {},
+          onPressed: () {
+            //TODO DESCONECT SOCKET SERVER
+            Navigator.pushReplacementNamed(context, 'login');
+            AuthService.deleteToken();
+          },
         ),
         actions: [
           Container(

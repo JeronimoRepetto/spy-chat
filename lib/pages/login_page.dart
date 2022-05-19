@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:spy_chat/helpers/show_alert.dart';
+import 'package:spy_chat/services/auth_service.dart';
 
 import '../widget/custom_button.dart';
 import '../widget/custom_input.dart';
@@ -51,6 +54,7 @@ class _FormState extends State<_Form> {
   final passController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Container(
         margin: const EdgeInsets.only(top: 40),
         padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -70,10 +74,21 @@ class _FormState extends State<_Form> {
               textController: passController,
             ),
             CustomButton(
-              onPressed: () {
-                print(emailController.text);
-                print(passController.text);
-              },
+              onPressed: authService.authenticating
+                  ? null
+                  : () async {
+                      FocusScope.of(context).unfocus();
+                      final loginOk = await authService.login(
+                          emailController.text.trim(),
+                          passController.text.trim());
+                      if (loginOk) {
+                        Navigator.pushReplacementNamed(context, 'users');
+                        //TODO conect socket server
+                      } else {
+                        showAlert(
+                            context, 'Error login', 'check your credentials');
+                      }
+                    },
               text: 'Login',
             )
           ],

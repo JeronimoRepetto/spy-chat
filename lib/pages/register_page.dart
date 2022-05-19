@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../helpers/show_alert.dart';
+import '../services/auth_service.dart';
 import '../widget/custom_button.dart';
 import '../widget/custom_input.dart';
 import '../widget/label.dart';
@@ -22,7 +25,10 @@ class RegisterPage extends StatelessWidget {
                 children: [
                   const Logo(title: 'Register'),
                   _Form(),
-                  const Labels(routeName: 'login', title: 'have account?',subTitle: 'Go login!'),
+                  const Labels(
+                      routeName: 'login',
+                      title: 'have account?',
+                      subTitle: 'Go login!'),
                   const Padding(
                     padding: EdgeInsets.only(bottom: 8.0),
                     child: Text(
@@ -49,6 +55,7 @@ class _FormState extends State<_Form> {
   final passController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Container(
         margin: const EdgeInsets.only(top: 40),
         padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -74,10 +81,21 @@ class _FormState extends State<_Form> {
               textController: passController,
             ),
             CustomButton(
-              onPressed: () {
-                print(emailController.text);
-                print(passController.text);
-              },
+              onPressed: authService.authenticating
+                  ? null
+                  : () async {
+                      FocusScope.of(context).unfocus();
+                      final registerOk = await authService.register(
+                          nameController.text.trim(),
+                          emailController.text.trim(),
+                          passController.text.trim());
+                      if (registerOk == true) {
+                        Navigator.pushReplacementNamed(context, 'users');
+                        //TODO conect socket server
+                      } else {
+                        showAlert(context, 'Error register', registerOk);
+                      }
+                    },
               text: 'Register',
             )
           ],
