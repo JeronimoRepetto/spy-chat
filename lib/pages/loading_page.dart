@@ -4,6 +4,7 @@ import 'package:spy_chat/pages/login_page.dart';
 import 'package:spy_chat/pages/users_pages.dart';
 
 import '../services/auth_service.dart';
+import '../services/socket_service.dart';
 
 class LoadingPage extends StatelessWidget {
   const LoadingPage({Key? key}) : super(key: key);
@@ -24,9 +25,11 @@ class LoadingPage extends StatelessWidget {
 
   Future checkLoginState(BuildContext context) async {
     final authService = Provider.of<AuthService>(context, listen: false);
+    final socketService = Provider.of<SocketService>(context, listen: false);
+
     final authenticated = await authService.isLogged();
     if (authenticated) {
-      //TODO CONECT SOCKET SERVER
+      socketService.connect();
       //Navigator.pushReplacementNamed(context, 'users');
       Navigator.pushReplacement(
           context, PageRouteBuilder(

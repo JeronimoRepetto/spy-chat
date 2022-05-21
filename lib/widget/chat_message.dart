@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:spy_chat/services/auth_service.dart';
 
 class ChatMessage extends StatelessWidget {
   const ChatMessage(
@@ -14,12 +16,14 @@ class ChatMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
     return FadeTransition(
       opacity: animationController,
       child: SizeTransition(
-        sizeFactor: CurvedAnimation(parent: animationController, curve: Curves.easeOut),
+        sizeFactor:
+            CurvedAnimation(parent: animationController, curve: Curves.easeOut),
         child: Container(
-          child: this.uid == '123' ? _myMessage() : _notMyMessage(),
+          child: uid == authService.user!.uid! ? _myMessage() : _notMyMessage(),
         ),
       ),
     );
@@ -47,12 +51,12 @@ class ChatMessage extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 5, left: 5, right: 50),
         padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+            color: Color(0xFFE4E5E8), borderRadius: BorderRadius.circular(20)),
         child: Text(
           text,
           style: TextStyle(color: Colors.black87),
         ),
-        decoration: BoxDecoration(
-            color: Color(0xFFE4E5E8), borderRadius: BorderRadius.circular(20)),
       ),
     );
   }
